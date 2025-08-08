@@ -6,8 +6,8 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import logo from '../assets/LogoDrak.png';
-import logoSmall from '../assets/IconLogo Dark.png'; // <-- Import the new small logo
+import logo from '../assets//LogoDrak.png';
+import logoSmall from '../assets/Icon Logo Dark.png'; // <-- Import the new small logo
 
 const Sidebar = ({ collapsed }) => {
   const navigate = useNavigate();
