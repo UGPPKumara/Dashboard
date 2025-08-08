@@ -5,6 +5,7 @@ import Employees from '../pages/Employees';
 import Customers from '../pages/Customers';
 import Login from '../pages/Login';
 import Profile from '../pages/Profile';
+import ForgotPassword from '../pages/ForgotPassword'; // <-- Import the new page
 import ProtectedRoute from './ProtectedRoute';
 
 const router = createBrowserRouter([
@@ -13,8 +14,12 @@ const router = createBrowserRouter([
     element: <Login />,
   },
   {
+    // Add the new route for the forgot password page
+    path: '/forgot-password',
+    element: <ForgotPassword />,
+  },
+  {
     path: '/',
-    // Protect the entire dashboard layout
     element: (
       <ProtectedRoute>
         <MainLayout />

@@ -10,8 +10,8 @@ export const AuthProvider = ({ children }) => {
 
   // CORRECTED: This now checks for the correct email from the form
   const login = (email, password) => {
-    if (email === 'admin@fieldops.com' && password === 'password') {
-      const userData = { name: 'Admin User', email: 'admin@fieldops.com' };
+    if (email === 'admin@ems.com' && password === 'password') {
+      const userData = { name: 'Admin User', email: 'admin@ems.com' };
       setUser(userData);
       localStorage.setItem('user', JSON.stringify(userData));
       return true;

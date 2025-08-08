@@ -1,22 +1,21 @@
 import AppRouter from './routes/AppRouter';
 import { AuthProvider } from './context/AuthContext';
-import { ConfigProvider } from 'antd'; // <-- Import ConfigProvider
+import { ConfigProvider } from 'antd';
 
 const App = () => {
   return (
     <ConfigProvider
       theme={{
+        // Global tokens that affect all components
         token: {
-          // This is the "blue-6" color 
-          colorPrimary: '#1677ff', 
+            colorPrimary: '#1677ff'
         },
+        // Component-specific overrides
         components: {
           Button: {
-            colorPrimary: '#0958d9',
-            colorPrimaryHover: '#1677ff',
-            colorPrimaryActive: '#002c8c',
+            colorPrimaryHover: '#1677ff', 
+            colorPrimaryActive: 'blue-9',
           },
-          // Add more component customizations as needed
         },
       }}
     >

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Form, Input, Button, Card, Typography, Modal, message } from 'antd';
+import React from 'react';
+import { Form, Input, Button, Card, Typography, message } from 'antd';
 import { MailOutlined, LockOutlined } from '@ant-design/icons';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -8,23 +8,23 @@ import logo from '../assets/logo.png';
 const { Title, Text, Link } = Typography;
 
 const Login = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [form] = Form.useForm(); // Hook to control the form
 
   const onFinish = (values) => {
-    const isLoggedIn = login(values.email, values.password);
-    if (isLoggedIn) {
-      navigate('/');
-    }
-  };
-
-  const showForgotPasswordModal = () => setIsModalVisible(true);
-  const handleCancel = () => setIsModalVisible(false);
-
-  const handleForgotPassword = (values) => {
-    message.success('If an account exists, a password reset link has been sent to your email.');
-    setIsModalVisible(false);
+    // Manually trigger validation before attempting to log in
+    form.validateFields()
+      .then(values => {
+        const isLoggedIn = login(values.email, values.password);
+        if (isLoggedIn) {
+          navigate('/');
+        }
+      })
+      .catch(info => {
+        console.log('Validate Failed:', info);
+        message.error('Please fill in all required fields.');
+      });
   };
 
   return (
@@ -37,10 +37,12 @@ const Login = () => {
         </div>
         
         <Form
+          form={form} // Attach form instance
           name="admin_login"
-          initialValues={{ remember: true }}
           onFinish={onFinish}
           autoComplete="off"
+          // Prevent validation while typing
+          validateTrigger=""
         >
           <Form.Item
             name="email"
@@ -61,15 +63,17 @@ const Login = () => {
 
           <Form.Item>
             <div className="flex justify-end">
-                <Link onClick={showForgotPasswordModal}>Forgot Password?</Link>
+                {/* Updated Link to navigate to the new page */}
+                <Link onClick={() => navigate('/forgot-password')}>Forgot Password?</Link>
             </div>
           </Form.Item>
 
           <Form.Item>
             <Button 
-                type="primary"
+                type="gradient"
+
                 htmlType="submit" 
-                className="w-full bg-blue-9 text-white hover:bg-blue-8 transition-colors duration-300"
+                className="w-full bg-blue-9 text-white"
                 size="large"
             >
               Log In
@@ -77,29 +81,6 @@ const Login = () => {
           </Form.Item>
         </Form>
       </Card>
-
-      <Modal
-        title="Reset Password"
-        open={isModalVisible}
-        onCancel={handleCancel}
-        footer={null}
-      >
-        <Form onFinish={handleForgotPassword} layout="vertical">
-          <p className="mb-4 text-slate-500">Enter your email address and we will send you a link to reset your password.</p>
-          <Form.Item
-            name="email"
-            label="Email"
-            rules={[{ required: true, message: 'Email is required!' }]}
-          >
-            <Input placeholder="you@example.com" />
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit" className="w-full">
-              Send Reset Link
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
     </div>
   );
 };
