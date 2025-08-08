@@ -3,26 +3,24 @@ import React, { createContext, useState, useContext } from 'react';
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  // Initialize state directly from localStorage to handle page refreshes
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem('user');
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
-  // Login now returns true or false instead of navigating
-  const login = (username, password) => {
-    if (username === 'admin' && password === 'password') {
+  // CORRECTED: This now checks for the correct email from the form
+  const login = (email, password) => {
+    if (email === 'admin@fieldops.com' && password === 'password') {
       const userData = { name: 'Admin User', email: 'admin@fieldops.com' };
       setUser(userData);
       localStorage.setItem('user', JSON.stringify(userData));
-      return true; // Indicate success
+      return true;
     } else {
       alert('Invalid credentials!');
-      return false; // Indicate failure
+      return false;
     }
   };
 
-  // Logout just clears the user state
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');

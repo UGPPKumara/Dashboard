@@ -3,7 +3,7 @@ import { Form, Input, Button, Card, Typography, Modal, message } from 'antd';
 import { MailOutlined, LockOutlined } from '@ant-design/icons';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import logo from '../assets/logo.png'; // <-- Import your logo
+import logo from '../assets/logo.png';
 
 const { Title, Text, Link } = Typography;
 
@@ -19,32 +19,21 @@ const Login = () => {
     }
   };
 
-  // --- Forgot Password Logic ---
-  const showForgotPasswordModal = () => {
-    setIsModalVisible(true);
-  };
+  const showForgotPasswordModal = () => setIsModalVisible(true);
+  const handleCancel = () => setIsModalVisible(false);
 
   const handleForgotPassword = (values) => {
-    console.log('Password reset requested for:', values.email);
-    // In a real app, you would make an API call here to send a reset email.
-    // For now, we'll just simulate it.
     message.success('If an account exists, a password reset link has been sent to your email.');
     setIsModalVisible(false);
   };
 
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
-  // -----------------------------
-
-
   return (
-    <div className="flex justify-center items-center min-h-screen bg-slate-200 p-4">
+    <div className="flex justify-center items-center min-h-screen bg-blue-1 p-4">
       <Card className="w-full max-w-md shadow-xl rounded-lg p-4">
         <div className="text-center mb-8">
           <img src={logo} alt="Company Logo" className="h-16 w-auto mx-auto mb-4" />
-          <Title level={4} className="text-slate-600">Employee Management System</Title>
-          <Text className="text-slate-500 text-[20px] ">Admin Login</Text>
+          <Title level={4} className="text-blue-9">Employee Management System</Title>
+          <Text className="text-slate-500">Admin Login</Text>
         </div>
         
         <Form
@@ -60,29 +49,27 @@ const Login = () => {
               { required: true, message: 'Please input your E-mail!' }
             ]}
           >
-            <Input prefix={<MailOutlined />} placeholder="Email" size="large" />
+            <Input prefix={<MailOutlined />} placeholder="Email (admin@fieldops.com)" size="large" />
           </Form.Item>
 
           <Form.Item
             name="password"
             rules={[{ required: true, message: 'Please input your Password!' }]}
           >
-            <Input.Password prefix={<LockOutlined />} placeholder="Password" size="large" />
+            <Input.Password prefix={<LockOutlined />} placeholder="Password (password)" size="large" />
           </Form.Item>
 
           <Form.Item>
             <div className="flex justify-end">
-                <Link onClick={showForgotPasswordModal}>
-                    Forgot Password?
-                </Link>
+                <Link onClick={showForgotPasswordModal}>Forgot Password?</Link>
             </div>
           </Form.Item>
 
           <Form.Item>
             <Button 
-                type="primary" 
+                type="primary"
                 htmlType="submit" 
-                className="w-full bg-lime-500 hover:bg-lime-600 border-none"
+                className="w-full bg-blue-9 text-white hover:bg-blue-8 transition-colors duration-300"
                 size="large"
             >
               Log In
@@ -91,7 +78,6 @@ const Login = () => {
         </Form>
       </Card>
 
-      {/* Forgot Password Modal */}
       <Modal
         title="Reset Password"
         open={isModalVisible}
@@ -103,15 +89,12 @@ const Login = () => {
           <Form.Item
             name="email"
             label="Email"
-            rules={[
-              { type: 'email', message: 'Please enter a valid email!' },
-              { required: true, message: 'Email is required!' }
-            ]}
+            rules={[{ required: true, message: 'Email is required!' }]}
           >
             <Input placeholder="you@example.com" />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" className="w-full bg-lime-500 hover:bg-lime-600 border-none">
+            <Button type="primary" htmlType="submit" className="w-full">
               Send Reset Link
             </Button>
           </Form.Item>

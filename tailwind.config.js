@@ -14,7 +14,7 @@ export default {
           3: '#91caff',
           4: '#69b1ff',
           5: '#4096ff',
-          6: '#1677ff', // This is our primary color
+          6: '#1677ff', // This is our  color
           7: '#0958d9',
           8: '#003eb3',
           9: '#002c8c',
