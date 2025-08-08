@@ -8,17 +8,16 @@ export const AuthProvider = ({ children }) => {
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
-  // CORRECTED: This now checks for the correct email from the form
+  // Simplified login logic
   const login = (email, password) => {
-    if (email === 'admin@ems.com' && password === 'password') {
-      const userData = { name: 'Admin User', email: 'admin@ems.com' };
+    if (email === 'admin@nuvoora.com' && password === 'password') {
+      const userData = { name: 'Admin User', email: 'admin@nuvoora.com' };
       setUser(userData);
       localStorage.setItem('user', JSON.stringify(userData));
       return true;
-    } else {
-      alert('Invalid credentials!');
-      return false;
     }
+    // Return a specific error message for invalid credentials
+    return 'Invalid email or password.';
   };
 
   const logout = () => {

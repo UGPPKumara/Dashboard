@@ -10,11 +10,22 @@ const App = () => {
         token: {
             colorPrimary: '#1677ff'
         },
-        // Component-specific overrides
         components: {
+          // blue: {
+          // 1: '#e6f4ff',
+          // 2: '#bae0ff',
+          // 3: '#91caff',
+          // 4: '#69b1ff',
+          // 5: '#4096ff',
+          // 6: '#1677ff', // This is our  color
+          // 7: '#0958d9',
+          // 8: '#003eb3',
+          // 9: '#002c8c',
+          // 10: '#001d66',
           Button: {
-            colorPrimaryHover: '#1677ff', 
-            colorPrimaryActive: 'blue-9',
+           
+            colorPrimaryHover: '#4096ff', 
+            colorPrimaryActive: '#002c8c',
           },
         },
       }}
