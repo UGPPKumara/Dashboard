@@ -1,41 +1,63 @@
 import React from 'react';
-import { Menu } from 'antd';
 import {
   DashboardOutlined,
   TeamOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
-import logo from '../assets//LogoDrak.png';
-import logoSmall from '../assets/Icon Logo Dark.png'; // <-- Import the new small logo
+import { useNavigate, useLocation } from 'react-router-dom';
+import logo from '../assets/LogoDrak.png';
+import logoSmall from '../assets/Icon Logo Dark.png';
+
+// Sub-component for individual menu items to keep the code clean
+const NavLink = ({ to, icon, label, collapsed, isActive }) => {
+  const navigate = useNavigate();
+  const activeClasses = isActive ? 'bg-blue-6 text-white' : 'text-slate-400 hover:bg-blue-8 hover:text-white';
+  
+  return (
+    <li className="mb-2">
+      <a
+        onClick={() => navigate(to)}
+        className={`flex items-center p-3 rounded-md cursor-pointer transition-colors duration-200 ${activeClasses}`}
+      >
+        <span className="text-xl">{icon}</span>
+        {!collapsed && <span className="ml-4 font-medium">{label}</span>}
+      </a>
+    </li>
+  );
+};
 
 const Sidebar = ({ collapsed }) => {
-  const navigate = useNavigate();
+  const location = useLocation();
+
+  const navItems = [
+    { to: '/', icon: <DashboardOutlined />, label: 'Dashboard' },
+    { to: '/employees', icon: <TeamOutlined />, label: 'Employees' },
+    { to: '/customers', icon: <UserOutlined />, label: 'Customers' },
+  ];
 
   return (
-    <>
-      <div className="h-16 flex items-center justify-center">
-        {/* Conditionally render the correct logo */}
+    <div className="flex flex-col h-full text-white p-2">
+      <div className="h-16 flex items-center justify-center mb-4">
         {collapsed ? (
           <img src={logoSmall} alt="Small Logo" className="h-8 w-auto" />
         ) : (
-          <img src={logo} alt="Logo" className="h-10 w-auto" />
+          <img src={logo} alt="Logo" className="h-8 w-auto" />
         )}
       </div>
-      <Menu
-        theme="dark"
-        mode="inline"
-        defaultSelectedKeys={['/']}
-        onClick={({ key }) => navigate(key)}
-        items={[
-          { key: '/', icon: <DashboardOutlined />, label: 'Dashboard' },
-          { key: '/employees', icon: <TeamOutlined />, label: 'Employees' },
-          { key: '/customers', icon: <UserOutlined />, label: 'Customers' },
-        ]}
-      />
 
-      
-    </>
+      <nav>
+        <ul>
+          {navItems.map((item) => (
+            <NavLink
+              key={item.to}
+              {...item}
+              collapsed={collapsed}
+              isActive={location.pathname === item.to}
+            />
+          ))}
+        </ul>
+      </nav>
+    </div>
   );
 };
 
