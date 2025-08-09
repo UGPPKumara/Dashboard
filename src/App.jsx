@@ -23,7 +23,6 @@ const App = () => {
           // 9: '#002c8c',
           // 10: '#001d66',
           Button: {
-           
             colorPrimaryHover: '#4096ff', 
             colorPrimaryActive: '#002c8c',
           },

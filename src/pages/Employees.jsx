@@ -1,38 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import {
+  Table,
+  Button,
+  Modal,
+  Form,
+  Input,
+  Space,
+  Typography,
+  message,
+} from 'antd';
+import {
   PlusOutlined,
   EyeOutlined,
   EditOutlined,
   DeleteOutlined,
-  CloseOutlined,
+  ExclamationCircleFilled,
 } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 import { employeeData as initialEmployeeData } from '../data/mockData';
-import ErrorCard from '../components/ErrorCard'; // Import the reusable ErrorCard
+import ErrorCard from '../components/ErrorCard';
 
-// --- Reusable Modal Component ---
-const Modal = ({ children, onClose }) => (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-40">
-    <div className="bg-white rounded-lg shadow-xl w-full max-w-lg m-4">
-      <div className="p-4 border-b flex justify-between items-center">
-        {children[0]} {/* Title Slot */}
-        <button onClick={onClose} className="text-slate-500 hover:text-slate-800">
-          <CloseOutlined />
-        </button>
-      </div>
-      <div className="p-6">{children[1]}</div> {/* Body Slot */}
-    </div>
-  </div>
-);
+const { Title } = Typography;
+const { Search } = Input;
 
-// --- Main Employees Component ---
 const Employees = () => {
   const [employees, setEmployees] = useState(initialEmployeeData);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
-  const [formState, setFormState] = useState({});
   const [error, setError] = useState('');
+  const [searchText, setSearchText] = useState('');
+  const [form] = Form.useForm();
+  const navigate = useNavigate();
 
-  // Effect to clear error message after 5 seconds
   useEffect(() => {
     if (error) {
       const timer = setTimeout(() => setError(''), 5000);
@@ -40,128 +39,126 @@ const Employees = () => {
     }
   }, [error]);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormState(prevState => ({ ...prevState, [name]: value }));
-  };
-
   const showAddModal = () => {
     setEditingEmployee(null);
-    setFormState({});
-    setIsModalOpen(true);
+    form.resetFields();
+    setIsModalVisible(true);
   };
 
   const showEditModal = (employee) => {
     setEditingEmployee(employee);
-    setFormState(employee);
-    setIsModalOpen(true);
+    form.setFieldsValue(employee);
+    setIsModalVisible(true);
+  };
+  
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    setEditingEmployee(null);
   };
 
   const handleDelete = (employeeId) => {
-    if (window.confirm('Are you sure you want to delete this employee? This action cannot be undone.')) {
-        setEmployees(employees.filter(emp => emp.id !== employeeId));
-    }
+    Modal.confirm({
+      title: 'Are you sure you want to delete this employee?',
+      icon: <ExclamationCircleFilled />,
+      content: 'This will permanently remove the employee from the system. This action cannot be undone.',
+      okText: 'Yes, Delete',
+      okType: 'danger',
+      cancelText: 'No, Cancel',
+      onOk: () => {
+        setEmployees(employees.filter((emp) => emp.id !== employeeId));
+        message.success('Employee deleted successfully');
+      },
+    });
   };
 
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-    if (!formState.name || !formState.email || !formState.position || !formState.username || !formState.password) {
-      setError('All fields are required.');
+  const handleFormSubmit = (values) => {
+    if (!values.name || !values.email || !values.position || !values.username || !values.password) {
+      setError('All fields are required. Please fill out the form completely.');
       return;
     }
 
     if (editingEmployee) {
-      // Update
-      setEmployees(employees.map(emp => emp.id === editingEmployee.id ? { ...emp, ...formState } : emp));
+      setEmployees(
+        employees.map((emp) =>
+          emp.id === editingEmployee.id ? { ...emp, ...values } : emp
+        )
+      );
+      message.success('Employee updated successfully!');
     } else {
-      // Add new
-      const newEmployee = { id: `emp${Date.now()}`, ...formState };
+      const newEmployee = { id: `emp${Date.now()}`, ...values };
       setEmployees([...employees, newEmployee]);
+      message.success('Employee added successfully!');
     }
-    setIsModalOpen(false);
+    setIsModalVisible(false);
   };
+
+  const columns = [
+    { title: 'Name', dataIndex: 'name', key: 'name', sorter: (a, b) => a.name.localeCompare(b.name) },
+    { title: 'Email', dataIndex: 'email', key: 'email' },
+    { title: 'Position', dataIndex: 'position', key: 'position' },
+    { title: 'Username', dataIndex: 'username', key: 'username' },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (_, record) => (
+        <Space size="middle">
+          <Button icon={<EyeOutlined />} onClick={() => navigate(`/employees/${record.id}`)}>View</Button>
+          <Button icon={<EditOutlined />} onClick={() => showEditModal(record)}>Edit</Button>
+          <Button icon={<DeleteOutlined />} danger onClick={() => handleDelete(record.id)}>Delete</Button>
+        </Space>
+      ),
+    },
+  ];
+
+  const filteredEmployees = employees.filter(emp => 
+    emp.name.toLowerCase().includes(searchText.toLowerCase()) ||
+    emp.email.toLowerCase().includes(searchText.toLowerCase()) ||
+    emp.position.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   return (
     <>
       <ErrorCard message={error} onClose={() => setError('')} />
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-blue-9">Employee Management</h1>
-        <button
-          onClick={showAddModal}
-          className="bg-blue-6 hover:bg-blue-5 text-white font-bold py-2 px-4 rounded-md inline-flex items-center transition-colors"
-        >
-          <PlusOutlined className="mr-2" />
-          Add Employee
-        </button>
-      </div>
-
-      {/* Custom Table */}
-      <div className="bg-white shadow-md rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-sm">
-            <thead className="bg-slate-100">
-              <tr>
-                <th className="p-3 text-left font-semibold text-slate-600">Name</th>
-                <th className="p-3 text-left font-semibold text-slate-600">Email</th>
-                <th className="p-3 text-left font-semibold text-slate-600">Position</th>
-                <th className="p-3 text-left font-semibold text-slate-600">Username</th>
-                <th className="p-3 text-left font-semibold text-slate-600">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {employees.map(emp => (
-                <tr key={emp.id} className="border-b hover:bg-slate-50">
-                  <td className="p-3 text-slate-800">{emp.name}</td>
-                  <td className="p-3 text-slate-500">{emp.email}</td>
-                  <td className="p-3 text-slate-500">{emp.position}</td>
-                  <td className="p-3 text-slate-500">{emp.username}</td>
-                  <td className="p-3">
-                    <div className="flex space-x-2">
-                      <button onClick={() => showEditModal(emp)} className="text-blue-6 hover:text-blue-5"><EditOutlined /></button>
-                      <button onClick={() => handleDelete(emp.id)} className="text-red-500 hover:text-red-400"><DeleteOutlined /></button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
+        <Title level={2} className="!mb-0">Employee Management</Title>
+        <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+          <Search
+            placeholder="Search employees..."
+            onChange={(e) => setSearchText(e.target.value)}
+            className="w-full sm:w-64"
+          />
+          <Button 
+            type="primary" 
+            icon={<PlusOutlined />} 
+            onClick={showAddModal}
+            className="w-full sm:w-auto"
+          >
+            Add Employee
+          </Button>
         </div>
       </div>
       
-      {/* Custom Modal for Add/Edit */}
-      {isModalOpen && (
-        <Modal onClose={() => setIsModalOpen(false)}>
-          <h2 className="text-xl font-semibold text-blue-9">{editingEmployee ? 'Edit Employee' : 'Add New Employee'}</h2>
-          
-          <form onSubmit={handleFormSubmit} className="space-y-4 mt-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-600">Full Name</label>
-              <input type="text" name="name" value={formState.name || ''} onChange={handleInputChange} className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-5 focus:border-blue-5"/>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-600">Email Address</label>
-              <input type="email" name="email" value={formState.email || ''} onChange={handleInputChange} className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-5 focus:border-blue-5"/>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-600">Position</label>
-              <input type="text" name="position" value={formState.position || ''} onChange={handleInputChange} className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-5 focus:border-blue-5"/>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-600">App Username</label>
-              <input type="text" name="username" value={formState.username || ''} onChange={handleInputChange} className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-5 focus:border-blue-5"/>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-600">App Password</label>
-              <input type="password" name="password" value={formState.password || ''} onChange={handleInputChange} className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-5 focus:border-blue-5"/>
-            </div>
-            <div className="pt-2">
-              <button type="submit" className="w-full bg-blue-6 hover:bg-blue-5 text-white font-bold py-2 px-4 rounded-md transition-colors">
-                {editingEmployee ? 'Save Changes' : 'Create Employee'}
-              </button>
-            </div>
-          </form>
-        </Modal>
-      )}
+      <Table columns={columns} dataSource={filteredEmployees} rowKey="id" bordered />
+
+      <Modal
+        title={editingEmployee ? 'Edit Employee' : 'Add New Employee'}
+        open={isModalVisible}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        <Form form={form} layout="vertical" onFinish={handleFormSubmit} autoComplete="off">
+          <Form.Item name="name" label="Full Name"><Input /></Form.Item>
+          <Form.Item name="email" label="Email Address"><Input /></Form.Item>
+          <Form.Item name="position" label="Position"><Input /></Form.Item>
+          <Form.Item name="username" label="App Username"><Input /></Form.Item>
+          <Form.Item name="password" label="App Password"><Input.Password /></Form.Item>
+          <Form.Item className="!mb-0">
+            <Button type="primary" htmlType="submit" block>
+              {editingEmployee ? 'Save Changes' : 'Create Employee'}
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
     </>
   );
 };

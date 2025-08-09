@@ -89,3 +89,33 @@ export const notificationData = [
     read: true,
   },
 ];
+
+export const visitsData = [
+  {
+    visitId: 'v001',
+    employeeId: 'emp001', // John Doe
+    customerId: 'cust001', // Global Tech Inc.
+    visitDate: '2025-08-08T09:15:00Z',
+    attendanceMethod: 'Fingerprint Scan',
+    location: { lat: 37.3875, lng: -122.0841 }, // Location captured during visit
+    nextVisitDate: '2025-09-08',
+  },
+  {
+    visitId: 'v002',
+    employeeId: 'emp002', // Jane Smith
+    customerId: 'cust002', // Innovate Solutions
+    visitDate: '2025-08-08T11:30:00Z',
+    attendanceMethod: 'Fingerprint Scan',
+    location: { lat: 30.2672, lng: -97.7431 },
+    nextVisitDate: '2025-09-10',
+  },
+  {
+    visitId: 'v003',
+    employeeId: 'emp001', // John Doe
+    customerId: 'cust003', // Pioneer Industries
+    visitDate: '2025-08-07T14:00:00Z',
+    attendanceMethod: 'Fingerprint Scan',
+    location: { lat: 42.3611, lng: -71.0599 },
+    nextVisitDate: '2025-09-07',
+  },
+];
