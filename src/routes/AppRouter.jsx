@@ -9,6 +9,8 @@ import Login from '../pages/Login';
 import Profile from '../pages/Profile';
 import ForgotPassword from '../pages/ForgotPassword';
 import ProtectedRoute from './ProtectedRoute';
+import Departments from '../pages/Departments';
+import Positions from '../pages/Positions';
 
 const router = createBrowserRouter([
   {
@@ -33,6 +35,8 @@ const router = createBrowserRouter([
       { path: 'customers', element: <Customers /> },
       { path: 'customers/:customerId', element: <CustomerDetails /> },
       { path: 'profile', element: <Profile /> },
+      { path: 'departments', element: <Departments /> },
+      { path: 'positions', element: <Positions /> },
     ],
   },
 ]);

@@ -3,6 +3,8 @@ import {
   DashboardOutlined,
   TeamOutlined,
   UserOutlined,
+  SolutionOutlined,
+  IdcardOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import logo from '../assets/LogoDrak.png';
@@ -33,6 +35,8 @@ const Sidebar = ({ collapsed }) => {
     { to: '/', icon: <DashboardOutlined />, label: 'Dashboard' },
     { to: '/employees', icon: <TeamOutlined />, label: 'Employees' },
     { to: '/customers', icon: <UserOutlined />, label: 'Customers' },
+    { to: '/departments', icon: <SolutionOutlined />, label: 'Departments' },
+    { to: '/positions', icon: <IdcardOutlined />, label: 'Positions' },
   ];
 
   return (

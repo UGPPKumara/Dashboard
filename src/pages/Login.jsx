@@ -3,12 +3,10 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import {
-  UserOutlined,
   MailOutlined,
   LockOutlined,
-  CloseOutlined,
-  EyeOutlined, // <-- Import Eye icon
-  EyeInvisibleOutlined, // <-- Import Eye Invisible icon
+  EyeOutlined,
+  EyeInvisibleOutlined,
 } from '@ant-design/icons';
 import ErrorCard from '../components/ErrorCard';
 
@@ -16,11 +14,10 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const [role, setRole] = useState('admin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false); // <-- State for password visibility
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   useEffect(() => {
     if (error) {
@@ -31,19 +28,11 @@ const Login = () => {
     }
   }, [error]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
 
-    if (!role || !email || !password) {
-      setError('Please fill in all fields.');
-      return;
-    }
-    if (role !== 'admin') {
-      setError('Only Admin users can log in.');
-      return;
-    }
-
-    const loginResult = login(email, password);
+    const loginResult = await login(email, password);
     if (loginResult === true) {
       navigate('/');
     } else {
@@ -62,23 +51,6 @@ const Login = () => {
           </div>
           
           <form onSubmit={handleSubmit} noValidate>
-            {/* Role Dropdown */}
-            <div className="mb-4">
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                  <UserOutlined className="text-slate-400" />
-                </span>
-                <select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="w-full pl-10 pr-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-5 focus:border-blue-5 border-slate-300 appearance-none"
-                >
-                  <option value="admin">Admin</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Email Field */}
             <div className="mb-4">
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -88,23 +60,22 @@ const Login = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email (admin@nuvoora.com)"
+                  placeholder="Email"
                   className="w-full pl-10 pr-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-5 focus:border-blue-5 border-slate-300"
                 />
               </div>
             </div>
 
-            {/* Password Field with Visibility Toggle */}
             <div className="mb-6">
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                   <LockOutlined className="text-slate-400" />
                 </span>
                 <input
-                  type={isPasswordVisible ? 'text' : 'password'} // <-- Dynamically change type
+                  type={isPasswordVisible ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Password (password)"
+                  placeholder="Password"
                   className="w-full pl-10 pr-10 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-5 focus:border-blue-5 border-slate-300"
                 />
                 <button

@@ -1,17 +1,33 @@
+export const departmentData = [
+  { id: 'dept001', name: 'Human Resources' },
+  { id: 'dept002', name: 'Engineering' },
+  { id: 'dept003', name: 'Marketing' },
+];
+
+export const positionData = [
+  { id: 'pos001', name: 'Field Officer' },
+  { id: 'pos002', name: 'Senior Field Officer' },
+  { id: 'pos003', name: 'Team Lead' },
+  { id: 'pos004', name: 'Software Engineer' },
+  { id: 'pos005', name: 'Marketing Manager' },
+];
+
 export const employeeData = [
   {
     id: 'emp001',
     name: 'John Doe',
     email: 'john.doe@example.com',
-    position: 'Field Officer',
+    positionId: 'pos001',
+    departmentId: 'dept002',
     username: 'johnd',
-    password: 'password123', // For demonstration only
+    password: 'password123',
   },
   {
     id: 'emp002',
     name: 'Jane Smith',
     email: 'jane.smith@example.com',
-    position: 'Senior Field Officer',
+    positionId: 'pos002',
+    departmentId: 'dept002',
     username: 'janes',
     password: 'password123',
   },
@@ -19,7 +35,8 @@ export const employeeData = [
     id: 'emp003',
     name: 'Peter Jones',
     email: 'peter.jones@example.com',
-    position: 'Field Officer',
+    positionId: 'pos001',
+    departmentId: 'dept002',
     username: 'peterj',
     password: 'password123',
   },
@@ -27,7 +44,8 @@ export const employeeData = [
     id: 'emp004',
     name: 'Mary Williams',
     email: 'mary.williams@example.com',
-    position: 'Team Lead',
+    positionId: 'pos003',
+    departmentId: 'dept003',
     username: 'maryw',
     password: 'password123',
   },

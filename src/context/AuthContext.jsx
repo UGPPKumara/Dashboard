@@ -1,33 +1,42 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import { auth } from '../firebase';
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem('user');
-    return storedUser ? JSON.parse(storedUser) : null;
-  });
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Simplified login logic
-  const login = (email, password) => {
-    if (email === 'admin@nuvoora.com' && password === 'password') {
-      const userData = { name: 'Admin User', email: 'admin@nuvoora.com' };
-      setUser(userData);
-      localStorage.setItem('user', JSON.stringify(userData));
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setLoading(false);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const login = async (email, password) => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
       return true;
+    } catch (error) {
+      return error.message;
     }
-    // Return a specific error message for invalid credentials
-    return 'Invalid email or password.';
   };
 
   const logout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
+    return signOut(auth);
   };
 
   const value = { user, login, logout };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => {
